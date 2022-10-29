@@ -6,7 +6,7 @@
 #define Am2 PORTB.B1
 #define Vd2 PORTB.B0
 
-unsigned char Semaforo[4]={0b00100001, 0b00100010, 0b00001100, 0b00010100}, LEDs, i;
+unsigned char Semaforo[4] = {0b00100001, 0b00100010, 0b00001100, 0b00010100}, LEDs, i;
 
 void main (void){
  DDRC.B1 = 1;
@@ -27,7 +27,7 @@ void main (void){
  delay_ms(1000);
  
  while (1){
-  for (i=0; i<=3; i++)
+  for (i = 0; i <= 3; i++)
    LEDs = Semaforo[i];
  }
 
