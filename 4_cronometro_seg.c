@@ -41,34 +41,34 @@ void main (void){
    DDRB.B4 = 1;
    DDRB.B5 = 1;
 
-   Led1=0;
-   Led2=0;
+   Led1 = 0;
+   Led2 = 0;
    
    while (1){
       A:
       
-      Led1=1;
-      Led2=0;
+      Led1 = 1;
+      Led2 = 0;
       
-      cont(r%10);
+      cont(r % 10);
       delay_ms(40);
       
-      Led1=0;
-      Led2=1;
+      Led1 = 0;
+      Led2 = 1;
       
-      cont((r/10)%10);
+      cont((r / 10) % 10);
       delay_ms(40);
       
       i++;
       
-      if(i==10){
+      if(i == 10){
          r++;
-         i=0;
-         if(r==59) goto B;
+         i = 0;
+         if(r == 59) goto B;
       }
       goto A;
       B:
-      r=0;
+      r = 0;
       continue;
    }
 }
