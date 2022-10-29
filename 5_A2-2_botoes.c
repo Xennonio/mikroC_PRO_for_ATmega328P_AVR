@@ -12,7 +12,7 @@
 
 #define Led PORTB.B4
 
-unsigned char Contagem[2]={0b0000001, 0b1001111};
+unsigned char Contagem[2] = {0b0000001, 0b1001111};
 
 unsigned char LEDs;
 
@@ -49,16 +49,16 @@ void main (void)
  DDRB.B5 = 1;
  DDRB.B7 = 1;
 
- Led=0;
+ Led = 0;
 
  while (1){
 
-   if(BT0==1){
+   if(BT0 == 1){
      cont(1);
    } else cont(0);
 
-   if(BT1==1){
-     Led=1;
-   } else Led=0;
+   if(BT1 == 1){
+     Led = 1;
+   } else Led = 0;
  }
 }
