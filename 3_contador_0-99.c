@@ -13,8 +13,8 @@
 #define Led1 PORTB.B4
 #define Led2 PORTB.B5
 
-unsigned char Contagem[10]={0b0000001, 0b1001111, 0b0010010, 0b0000110, 0b1001100, 0b0100100, 0b0100000, 0b0001111, 0b0000000, 0b0000100}, EDs;
-int r=0;
+unsigned char Contagem[10] = {0b0000001, 0b1001111, 0b0010010, 0b0000110, 0b1001100, 0b0100100, 0b0100000, 0b0001111, 0b0000000, 0b0000100}, EDs;
+int r = 0;
 
 cont(int n){
   LEDs = Contagem[n];
@@ -41,37 +41,37 @@ void main (void){
   DDRB.B4 = 1;
   DDRB.B5 = 1;
   
-  Led1=0;
-  Led2=0;
+  Led1 = 0;
+  Led2 = 0;
   
   while (1){
-    if(BT0==1){
+    if(BT0 == 1){
       r++;
       delay_ms(300);
     }
     
-    if(BT1==1){
+    if(BT1 == 1){
       r--;
-      if(r<0){
-        r=99;
+      if(r < 0){
+        r = 99;
       }
       delay_ms(300);
     }
     
-    if(BT2==1){
-      r=0;
+    if(BT2 == 1){
+      r = 0;
       delay_ms(300);
     }
     
-    Led1=1;
-    Led2=0;
+    Led1 = 1;
+    Led2 = 0;
     
-    cont(r%10);
+    cont(r % 10);
     
-    Led1=0;
-    Led2=1;
+    Led1 = 0;
+    Led2 = 1;
     
-    cont((r/10)%10);
+    cont((r / 10) % 10);
     
     continue;
   }
