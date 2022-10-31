@@ -16,10 +16,6 @@
 #define MSG4 3
 #define MSG5 4
 #define MSG6 5
-#define MSG7 6
-#define MSG8 7
-#define MSG9 8
-#define MSG10 9
 
 unsigned char Tab_Disp[10] = {0x03, 0x9F, 0x25, 0x0D, 0x99, 0x49, 0x41, 0x1F, 0x01, 0x09},
 Tab_CGRam[40] = {0x18, 0x18, 0x06, 0x09, 0x08, 0x09, 0x06, 0x00, 0x01, 0x03, 0x07, 0x0F, 0x07, 0x03, 0x01, 0x00,
@@ -166,8 +162,8 @@ void Escreve_Char(unsigned char Num_CGRAM){
 
 void Escreve_Frase(unsigned char Local){
   unsigned char i;
-   code unsigned char Message[10][17] = {" Liceu de Artes ", " e Oficios - SP ", "  Leitura dos   ", "  Canais 4 e 5  ", "Canal-5  Canal-4",
-"                ", " Mensagem -- 07 ", " Mensagem -- 08 ", " Mensagem -- 09 ", " Mensagem -- 10 "};
+   code unsigned char Message[6][17] = {" Liceu de Artes ", " e Oficios - SP ", "  Leitura dos   ", "  Canais 4 e 5  ", "Canal-5  Canal-4",
+"                "};
   for(i = 0; i <= (NumCol-1); i++){
     display = ((Message[Local][i]) & 0xF0);
     Data7 = display.B7;
