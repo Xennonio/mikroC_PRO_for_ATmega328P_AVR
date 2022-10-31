@@ -259,46 +259,6 @@ void Escreve_Char(unsigned char Num_CGRAM){
  EN = 0;
 }
 
-void Escreve_Frase (unsigned char Local)
-{
- unsigned char i;
-//                                      0123456789ABCDEF
- code unsigned char Message[10][17] = {"  Liceu --- SP  ",  //Mensagem MSG1
-                                       "KIT -Atmega328p-",  //Mensagem MSG2
-                                       " -Teste da CPU- ",  //Mensagem MSG3
-                                       "Em funcionamento",  //Mensagem MSG4
-                                       "Teste do Teclado",  //Mensagem MSG5
-                                       "    Matricial   ",  //Mensagem MSG6
-                                       "Digite Sua Senha",  //Mensagem MSG7
-                                       "De Seis Digitos:",  //Mensagem MSG8
-                                       " Aguardando...  ",  //Mensagem MSG9
-                                       ">>>>>      <<<<<"}; //Mensagem MSG10
- for (i=0; i<=(NumCol-1); i++)
-  {
-   display = ((Message[Local][i]) & 0xF0);
-   Data7 = display.B7;
-   Data6 = display.B6;
-   Data5 = display.B5;
-   Data4 = display.B4;
-   delay_ms (2);
-   RS = 1;
-   EN = 1;
-   delay_ms (2);
-   EN = 0;
-
-   display = ((Message[Local][i]) << 4);
-   Data7 = display.B7;
-   Data6 = display.B6;
-   Data5 = display.B5;
-   Data4 = display.B4;
-   delay_ms (2);
-   RS = 1;
-   EN = 1;
-   delay_ms (2);
-   EN = 0;
-  }
-}
-
 void Escreve_Frase(unsigned char Local){
   unsigned char i;
    code unsigned char Message[10][17] = {"  Liceu --- SP  ", "KIT -Atmega328p-", " -Teste da CPU- ", "Em funcionamento", "Teste do Teclado",
@@ -364,9 +324,17 @@ int main(void){
   int Senha_Real[6], n, k, i, l, m;
   i = 0;
   m = 0;
+  
   DDRD.B6 = 1;
   OCR0A = 0;
-  for(n = 0; n < 6; n++) Senha_Real[n] = n;
+  
+  Senha_Real[0] = 1;
+  Senha_Real[1] = 2;
+  Senha_Real[2] = 3;
+  Senha_Real[3] = 4;
+  Senha_Real[4] = 5;
+  Senha_Real[5] = 6;
+  
   Config_Ports();
   Disp_4bits();
   
@@ -379,6 +347,7 @@ int main(void){
   }
   
   Init_Timer0();
+  
   while(1){
     Posi_Char(Linha2);
     Escreve_Frase(9);
@@ -394,7 +363,6 @@ int main(void){
   }
   
   if(m == 6) OCR0A = 1;
-  
   delay_ms(500);
   Posi_Char(Linha2);
   Escreve_Frase(9);
