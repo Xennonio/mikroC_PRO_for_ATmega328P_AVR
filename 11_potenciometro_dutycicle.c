@@ -182,6 +182,7 @@ void Escreve_Frase(unsigned char Local){
     EN = 0;
   }
 }
+
 void Blink(void){
   Posi_Char (0x0F);
 }
