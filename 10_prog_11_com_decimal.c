@@ -225,7 +225,7 @@ int AD_Conv(unsigned char canalAD){
 
 void mostra (int n, double x){
   aux1 = x/100;
-  aux2 = x - 100*floor(x/100);
+  aux2 = x - 100*floor(aux1);
 
   Dec = 10*(x - floor(x));
   Uni = aux2 - (10 * floor(aux2 / 10));
