@@ -167,8 +167,8 @@ void Escreve_Char(unsigned char Num_CGRAM){
 
 void Escreve_Frase(unsigned char Local){
   unsigned char i;
-   code unsigned char Message[10][17] = {" Liceu de Artes ", " e Oficios - SP ", "  Leitura dos   ", "  Canais 4 e 5  ", "Canal-5  Canal-4",
-"                ", " Mensagem -- 07 ", " Mensagem -- 08 ", " Mensagem -- 09 ", " Mensagem -- 10 "};
+   code unsigned char Message[6][17] = {" Liceu de Artes ", " e Oficios - SP ", "  Leitura dos   ", "  Canais 4 e 5  ", "Canal-5  Canal-4",
+"                "};
   for(i = 0; i <= (NumCol-1); i++){
     display = ((Message[Local][i]) & 0xF0);
     Data7 = display.B7;
