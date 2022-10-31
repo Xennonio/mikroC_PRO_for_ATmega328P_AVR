@@ -226,8 +226,8 @@ int AD_Conv(unsigned char canalAD){
 } //end ad_conv
 
 void mostra (int n, double x){
-  aux1 = 150 * x / 102200;
-  aux2 = (150 * x / 1022) - 100 * floor(150 * x / 102200);
+  aux1 = x/100;
+  aux2 = x - 100 * floor(aux1);
 
   Uni = aux2 - (10 * floor(aux2 / 10));
   Dez = aux2 / 10;
@@ -266,10 +266,10 @@ void main(void){
   while(1){
   AD_Conv(5);
   ideal_value = analog; //Lê Set-Point = Analógico 4
-  mostra(1, ideal_value);
+  mostra(1, 150*ideal_value/1022);
 
   AD_Conv(4);
   measure = analog; //Lê Valor de Processo = Analógico 3
-   mostra(10, measure);
+   mostra(10, 150*measure/1022);
   }
 }
