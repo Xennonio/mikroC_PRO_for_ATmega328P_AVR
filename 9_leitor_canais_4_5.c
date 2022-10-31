@@ -232,11 +232,11 @@ void mostra (int n, double x){
   Mil = aux1 / 10;
  
   Posi_Char(Linha2 + n);
-  Escreve_Char(Cen + '0');
+  Escreve_Char(Mil + '0');
   Posi_Char(Linha2 + n + 1);
-  Escreve_Char(Dez + '0');
+  Escreve_Char(Cen + '0');
   Posi_Char(Linha2 + n + 2);
-  Escreve_Char(Uni + '0');
+  Escreve_Char(Dez + '0');
   Posi_Char(Linha2 + n + 3);
   Escreve_Char(Uni + '0');
 }
@@ -265,10 +265,10 @@ void main(void){
   while(1){
   AD_Conv(5);
   ideal_value = analog; //Lê Set-Point = Analógico 4
-  mostra(1, 150*ideal_value/1022);
+  mostra(1, ideal_value);
 
   AD_Conv(4);
   measure = analog; //Lê Valor de Processo = Analógico 3
-   mostra(10, 150*measure/1022);
+   mostra(10, measure);
   }
 }
