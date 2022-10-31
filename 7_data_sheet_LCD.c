@@ -1,31 +1,31 @@
 //Display de LCD com barramento de dados com 4 bits
 
 //Conexão do hardware do LCD
-#define  Data7 PORTB.B0  //Porto de conexão D7 do LCD
-#define  Data6 PORTB.B1  //Porto de conexão D6 do LCD
-#define  Data5 PORTB.B2  //Porto de conexão D5 do LCD
-#define  Data4 PORTB.B3  //Porto de conexão D4 do LCD
-#define  RS PORTB.B4  //Bit RW do LCD
-#define  EN PORTB.B5  //Bit EN do LCD
-#define  BT1 PIND.B2
-#define  BT2 PIND.B3
+#define Data7 PORTB.B0  //Porto de conexão D7 do LCD
+#define Data6 PORTB.B1  //Porto de conexão D6 do LCD
+#define Data5 PORTB.B2  //Porto de conexão D5 do LCD
+#define Data4 PORTB.B3  //Porto de conexão D4 do LCD
+#define RS PORTB.B4  //Bit RW do LCD
+#define EN PORTB.B5  //Bit EN do LCD
+#define BT1 PIND.B2
+#define BT2 PIND.B3
 
 //Controle de posicionamento de caracteres e strings no LCD
-#define  NumCol 16 //Número de colunas do LCD (16x2)
-#define  Linha1 0x80 //1º endereço linha 1 do LCD
-#define  Linha2 0xC0 //1º endereço linha 2 do LCD
-#define  Linha3 0x90 //1º endereço linha 3 do LCD
-#define  Linha4 0xD0 //1º endereço linha 4 do LCD
-#define  MSG1 0 //Código da 1ª Mensagem
-#define  MSG2 1 //Código da 2ª Mensagem
-#define  MSG3 2 //Código da 3ª Mensagem
-#define  MSG4 3 //Código da 4ª Mensagem
-#define  MSG5 4 //Código da 5ª Mensagem
-#define  MSG6 5 //Código da 6ª Mensagem
-#define  MSG7 6 //Código da 7ª Mensagem
-#define  MSG8 7 //Código da 8ª Mensagem
-#define  MSG9 8 //Código da 9ª Mensagem
-#define  MSG10 9 //Código da 10ª Mensagem
+#define NumCol 16 //Número de colunas do LCD (16x2)
+#define Linha1 0x80 //1º endereço linha 1 do LCD
+#define Linha2 0xC0 //1º endereço linha 2 do LCD
+#define Linha3 0x90 //1º endereço linha 3 do LCD
+#define Linha4 0xD0 //1º endereço linha 4 do LCD
+#define MSG1 0 //Código da 1ª Mensagem
+#define MSG2 1 //Código da 2ª Mensagem
+#define MSG3 2 //Código da 3ª Mensagem
+#define MSG4 3 //Código da 4ª Mensagem
+#define MSG5 4 //Código da 5ª Mensagem
+#define MSG6 5 //Código da 6ª Mensagem
+#define MSG7 6 //Código da 7ª Mensagem
+#define MSG8 7 //Código da 8ª Mensagem
+#define MSG9 8 //Código da 9ª Mensagem
+#define MSG10 9 //Código da 10ª Mensagem
 
 unsigned char display;
 
