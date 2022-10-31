@@ -240,7 +240,6 @@ void mostra (int n, double x){
   Escreve_Char(Dez + '0');
   Posi_Char(Linha2 + n + 2);
   Escreve_Char(Uni + '0');
-  Posi_Char(Linha2 + n + 3);
 }
 
 void main(void){
