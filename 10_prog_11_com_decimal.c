@@ -240,29 +240,33 @@ void converte(double x){
 }
 
 void mostra1(){
-  Posi_Char(Linha2 + 1);
-  Escreve_Char(Cen + '0');
-  Posi_Char(Linha2 + 2);
-  Escreve_Char(Dez + '0');
-  Posi_Char(Linha2 + 3);
-  Escreve_Char(Uni + '0');
-  Posi_Char(Linha2 + 4);
-  Escreve_Char(',');
-  Posi_Char(Linha2 + 5);
-  Escreve_Char(Dec + '0');
+ Posi_Char(Linha2 + 0);
+ Escreve_Char(Cen + '0');
+ Posi_Char(Linha2 + 1);
+ Escreve_Char(Dez + '0');
+ Posi_Char(Linha2 + 2);
+ Escreve_Char(Uni + '0');
+ Posi_Char(Linha2 + 3);
+ Escreve_Char(',');
+ Posi_Char(Linha2 + 4);
+ Escreve_Char(Dec + '0');
+ Posi_Char(Linha2 + 6);
+ Escreve_Char('C');
 }
 
 void mostra2(){
-  Posi_Char(Linha2 + 10);
-  Escreve_Char(CenF + '0');
-  Posi_Char(Linha2 + 11);
-  Escreve_Char(DezF + '0');
-  Posi_Char(Linha2 + 12);
-  Escreve_Char(UniF + '0');
-  Posi_Char(Linha2 + 13);
-  Escreve_Char(',');
-  Posi_Char(Linha2 + 14);
-  Escreve_Char(DecF + '0');
+ Posi_Char(Linha2 + 9);
+ Escreve_Char(CenF + '0');
+ Posi_Char(Linha2 + 10);
+ Escreve_Char(DezF + '0');
+ Posi_Char(Linha2 + 11);
+ Escreve_Char(UniF + '0');
+ Posi_Char(Linha2 + 12);
+ Escreve_Char(',');
+ Posi_Char(Linha2 + 13);
+ Escreve_Char(DecF + '0');
+ Posi_Char(Linha2 + 15);
+ Escreve_Char('F');
 }
 
 void main(void){
