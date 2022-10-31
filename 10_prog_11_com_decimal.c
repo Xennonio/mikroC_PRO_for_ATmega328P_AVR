@@ -23,7 +23,7 @@ Tab_CGRam[40] = {0x18, 0x18, 0x06, 0x09, 0x08, 0x09, 0x06, 0x00, 0x01, 0x03, 0x0
 Tab_Conf[4] = {0x28, 0x06, 0x01, 0x0C},
 Tab_4Bit[4] = {0x30, 0x30, 0x30, 0x20},
 Uni, Dez, Cen, Dec, display, Digitos[11], digito, cnt;
-double aux1, aux2, analog, measure, ideal_value, valorF, aux1F, aux2F, DecF, CenF, DezF, UniF;
+double aux1, aux2, analog, F, aux1F, aux2F, DecF, CenF, DezF, UniF;
 void pid_control();
 
 void Disp_4bits(void){
@@ -219,7 +219,7 @@ int AD_Conv(unsigned char canalAD){
   return analog;
 }
 
-void mostra (int n, double x){
+void converte(double x){
   aux1 = x/100;
   aux2 = x - 100*floor(aux1);
 
@@ -228,7 +228,7 @@ void mostra (int n, double x){
   Dez = aux2 / 10;
   Cen = aux1 - (10 * floor(aux1 / 10));
   
-  F = 9*x/5 + 32
+  F = 9*x/5 + 32;
     
   aux1F = F/100;
   aux2F = F - 100*floor(F/100);
@@ -237,17 +237,32 @@ void mostra (int n, double x){
   UniF = aux2F - 10*floor(aux2F/10);
   DezF = aux2F/10;
   CenF = aux1F - 10*floor(aux1F/10);
- 
-  Posi_Char(Linha2 + n);
+}
+
+void mostra1(){
+  Posi_Char(Linha2 + 1);
   Escreve_Char(Cen + '0');
-  Posi_Char(Linha2 + n + 1);
+  Posi_Char(Linha2 + 2);
   Escreve_Char(Dez + '0');
-  Posi_Char(Linha2 + n + 2);
+  Posi_Char(Linha2 + 3);
   Escreve_Char(Uni + '0');
-  Posi_Char(Linha2 + n + 3);
+  Posi_Char(Linha2 + 4);
   Escreve_Char(',');
-  Posi_Char(Linha2 + n + 4);
+  Posi_Char(Linha2 + 5);
   Escreve_Char(Dec + '0');
+}
+
+void mostra2(){
+  Posi_Char(Linha2 + 10);
+  Escreve_Char(CenF + '0');
+  Posi_Char(Linha2 + 11);
+  Escreve_Char(DezF + '0');
+  Posi_Char(Linha2 + 12);
+  Escreve_Char(UniF + '0');
+  Posi_Char(Linha2 + 13);
+  Escreve_Char(',');
+  Posi_Char(Linha2 + 14);
+  Escreve_Char(DecF + '0');
 }
 
 void main(void){
@@ -273,11 +288,11 @@ void main(void){
   
   while(1){
   AD_Conv(5);
-  ideal_value = analog;
-  mostra(1, 150*ideal_value/1022;
+  converte(150*analog/1022);
+  mostra1();
 
   AD_Conv(4);
-  measure = analog;
-  mostra(10, 150*ideal_value/1022;
+  converte(150*analog/1022);
+  mostra2();
   }
 }
