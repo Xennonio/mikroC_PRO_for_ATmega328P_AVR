@@ -204,7 +204,7 @@ void Config_Ports(void){
   DDRB.B3 = 1;
   DDRB.B4 = 1;
   DDRB.B5 = 1;
-  ADCSRA  = 0x93; //liga conversão AD, fator de divisão de 8
+  ADCSRA  = 0x93;
 }
 
 int AD_Conv(unsigned char canalAD){
