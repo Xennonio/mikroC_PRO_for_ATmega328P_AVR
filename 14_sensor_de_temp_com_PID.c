@@ -288,6 +288,6 @@ void main(void){
     mostra(Linha3, 6, 459*analog/1022 + 32);
     pid_control(analog);
     mostra(Linha2, 12, pwm);
-    mostra(Linha3, 12, 459*pwm/1022 + 32);
+    mostra(Linha3, 12, 9*pwm/5 + 32);
   }
 }
