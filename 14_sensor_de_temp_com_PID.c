@@ -30,7 +30,7 @@ interr,
 derr,
 PID,
 input,
-kp = 0.5, ki = 0.3, kd = 0.05, ideal_value = 512.0;
+kp = 0.2, ki = 0.2, kd = 0.03, ideal_value = 512.0;
 
 int pwm = 128;
 
@@ -170,7 +170,7 @@ void Escreve_Char(unsigned char Num_CGRAM){
 
 void Escreve_Frase(unsigned char Local){
   unsigned char i;
- code unsigned char Message[3][18] = {" S-P   V-A   PID ",
+ code unsigned char Message[3][18] = {" V-A   S-P   PID ",
                                       "   'C    'C    'C",
                                       "   'F    'F    'F"};
   for(i = 0; i <= (NumCol-1); i++){
@@ -276,10 +276,12 @@ void main(void){
     AD_Conv(4);
     mostra(Linha2, 0, 255*analog/1022);
     mostra(Linha3, 0, 459*analog/1022 + 32);
-    if(lastanalog == analog){
-    } else{
-      AD_Conv(4);
+    if(lastanalog != analog){
       input = analog;
+      error = analog;
+      properr = analog;
+      interr = analog;
+      derr = analog;
     }
     lastanalog = analog;
 
