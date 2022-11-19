@@ -270,10 +270,12 @@ void main(void){
   while(1){
     AD_Conv(4);
     mostra(1, 255*analog/1022);
-    if(lastanalog == analog){
-    } else{
-      AD_Conv(4);
+    if(lastanalog != analog){
       input = analog;
+      error = analog;
+      properr = analog;
+      interr = analog;
+      derr = analog;
     }
     lastanalog = analog;
   
