@@ -46,8 +46,9 @@ interr,
 derr,
 PID,
 input,
+setpoint2[3],
 kp = 0.2, ki = 0.2, kd = 0.03, ideal_value = 512.0;
-int setpoint2[3], pwm = 128;
+int pwm = 128;
 
 //------Começo do Código de Varredura de Teclado
 #define col_1   PORTD.B4
@@ -415,7 +416,6 @@ void main(void){
   Config_Ports();
   Disp_4bits();
   Init_Timer0();
-  
   while(1){
     Posi_Char(Linha1);
     Escreve_Frase(MSG6);
@@ -439,7 +439,7 @@ void main(void){
   Escreve_Frase(MSG3);
 
   while(1){
-
+    if(Key_Ok == '#') goto B;
     AD_Conv(4);
     mostra(Linha2, 0, 255*analog/1022);
     mostra(Linha3, 0, 459*analog/1022 + 32);
@@ -451,15 +451,15 @@ void main(void){
       derr = analog;
     }
     lastanalog = analog;
-    
+
     setpointconv(0);
     setpointconv(1);
     setpointconv(2);
-    analog = setpoint2[0]*100 + setpoint2[1]*10 + setpoint2[2];
-    mostra(Linha2, 6, analog);
-    mostra(Linha3, 6, 1.8*analog + 32);
+    analog = 1022*(setpoint2[0]*100 + setpoint2[1]*10 + setpoint2[2])/255;
+    mostra(Linha2, 6, 255*analog/1022);
+    mostra(Linha3, 6, 459*analog/1022 + 32);
     pid_control(analog);
-    if(abs(pwm - anal) < 100e-3){
+    if(abs(pwm - 255*analog/1022) < 100e-3){
       Posi_Char(Linha4);
       Escreve_Frase(MSG5);
       mostra(Linha4, 6, pwm);
