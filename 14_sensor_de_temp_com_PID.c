@@ -29,11 +29,11 @@ unsigned char Tab_CGRam[40] = {0x18, 0x18, 0x06, 0x09, 0x08, 0x09, 0x06, 0x00, /
                                0x08, 0x0C, 0x0E, 0x0F, 0x0E, 0x0C, 0x08, 0x00, //>
                                0x00, 0x00, 0x04, 0x0E, 0x1F, 0x00, 0x00, 0x00, //Seta para cima
                                0x00, 0x00, 0x1F, 0x0E, 0x04, 0x00, 0x00, 0x00},//Seta para baixo
-                               
+
 //Parâmetros de configuração inicial do display LCD 4 Bits
 Tab_Conf[4] = {0x28, 0x06, 0x01, 0x0C},
 Tab_4Bit[4] = {0x30, 0x30, 0x30, 0x20},
-Uni, Dez, Cen, display;
+Uni, Dez, Cen, display, setpoint[3];
 
 //Declaração de variáveis globais
 double aux1, aux2,
@@ -47,7 +47,7 @@ derr,
 PID,
 input,
 kp = 0.2, ki = 0.2, kd = 0.03, ideal_value = 512.0;
-int pwm = 128;
+int setpoint2[3], pwm = 128;
 
 //------Começo do Código de Varredura de Teclado
 #define col_1   PORTD.B4
@@ -131,6 +131,17 @@ char Le_Tecla(void){
   return(Key_Ok);
 }
 //------Fim do Código de Varredura de Teclado
+
+//Função que realiza a interrupção do timer 0 a cada 10mS, parametrizada conforme datasheet do Atmega328p
+void ISR_Timer0(void) iv IVT_ADDR_TIMER0_OVF{
+  TCNT0 = 5;//Recarrega o valor do timer
+  //Alterna as saidas da PORTD
+  cnt++;
+  if(cnt >= 19){
+    cnt = 0;
+    Scan_KBD(); //Solicita função de varredura do teclado
+  }
+}
 
 //Procedimento para ajuste inicial do HD44780 considerando que o reset interno falhou durante a energização
 void Disp_4bits(void){
@@ -299,6 +310,15 @@ void Escreve_Frase(unsigned char Local){
   }
 }
 
+void Blink(void){
+  Posi_Char (0x0F);
+}
+
+void Cursor_Off(void){
+  Posi_Char (0x0C);
+}
+
+
 void Config_Ports(void){
   DDRB.B0 = 1;
   DDRB.B1 = 1;
@@ -353,14 +373,17 @@ void mostra(int h, int n, double x){
 }
 
 void Init_Timer0(void){
-  WGM00_Bit = 1;
-  WGM01_Bit = 1;
+  //Normal Mode
+  WGM00_Bit = 0;
+  WGM01_Bit = 0;
   WGM02_Bit = 0;
-  COM0A1_Bit = 1;
-  COM0A0_Bit = 0;
+  //Configura prescaler 1:64
   TCCR0B.CS00 = 1;
   TCCR0B.CS01 = 1;
   TCCR0B.CS02 = 0;
+  TIMSK0.TOIE0 = 1; //Habilita interrupção por overflow
+  TCNT0 = 5; //Carrega valor do timer
+  asm sei; //Habilita int. global
 }
 
 void pid_control(double setpoint){
@@ -372,16 +395,42 @@ void pid_control(double setpoint){
   PID = properr + interr + derr;
   input = PID;
   pwm = 255*PID/1022;
-  
+}
+
+int setpointconv(int n){
+  if(setpoint[n] == '1') setpoint2[n] = 1;
+  if(setpoint[n] == '2') setpoint2[n] = 2;
+  if(setpoint[n] == '3') setpoint2[n] = 3;
+  if(setpoint[n] == '4') setpoint2[n] = 4;
+  if(setpoint[n] == '5') setpoint2[n] = 5;
+  if(setpoint[n] == '6') setpoint2[n] = 6;
+  if(setpoint[n] == '7') setpoint2[n] = 7;
+  if(setpoint[n] == '8') setpoint2[n] = 8;
+  if(setpoint[n] == '9') setpoint2[n] = 9;
 }
 
 void main(void){
-  int setpoint[3], j, i;
+  int j, i;
   i = 0;
   Config_Ports();
   Disp_4bits();
   Init_Timer0();
-
+  
+  while(1){
+    Posi_Char(Linha1);
+    Escreve_Frase(MSG6);
+    for(j = 0; j < 3; j++){
+      Le_Tecla();
+      if(Key_Ok != 0){
+        setpoint[i] = Key_Ok;
+        i++;
+        Posi_Char (Linha2 + 6 + i);
+        Escreve_Char(Key_Ok);
+        if(i == 3) goto A;
+      }
+    }
+  }
+  A:
   Posi_Char(Linha1);
   Escreve_Frase(MSG1);
   Posi_Char(Linha2);
@@ -403,11 +452,14 @@ void main(void){
     }
     lastanalog = analog;
     
-    AD_Conv(5);
-    mostra(Linha2, 6, 255*analog/1022);
-    mostra(Linha3, 6, 459*analog/1022 + 32);
+    setpointconv(0);
+    setpointconv(1);
+    setpointconv(2);
+    analog = setpoint2[0]*100 + setpoint2[1]*10 + setpoint2[2];
+    mostra(Linha2, 6, analog);
+    mostra(Linha3, 6, 1.8*analog + 32);
     pid_control(analog);
-    if(abs(pwm - 255*analog/1022) < 100e-3){
+    if(abs(pwm - anal) < 100e-3){
       Posi_Char(Linha4);
       Escreve_Frase(MSG5);
       mostra(Linha4, 6, pwm);
