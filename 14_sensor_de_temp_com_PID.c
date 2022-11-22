@@ -7,7 +7,7 @@
 #define EN PORTB.B5
 
 //Controle de posicionamento de caracteres e strings no LCD
-#define NumCol 17 //Número de colunas do LCD (17x5)
+#define NumCol 17 //Número de colunas do LCD (17x4)
 
 //Endereços das linhas do LCD
 #define Linha1 0x80
@@ -21,6 +21,7 @@
 #define MSG3 2
 #define MSG4 3
 #define MSG5 4
+#define MSG6 5
 
 //Caracteres especiais a serem carregados na CGRAM do display LCD
 unsigned char Tab_CGRam[40] = {0x18, 0x18, 0x06, 0x09, 0x08, 0x09, 0x06, 0x00, //°C
@@ -268,11 +269,12 @@ void Escreve_Char(unsigned char Num_CGRAM){
 
 void Escreve_Frase(unsigned char Local){
   unsigned char i;
- code unsigned char Message[5][18] = {" V-I   S-P   DIF ",
+ code unsigned char Message[6][18] = {" V-I   S-P   DIF ",
                                       "    C     C     C",
                                       "    F     F     F",
                                       " V-A:     C   ON ",
-                                      " V-A:     C  OFF "};
+                                      " V-A:     C  OFF ",
+                                      "Escolha Setpoint:"};
   for(i = 0; i <= (NumCol-1); i++){
     display = ((Message[Local][i]) & 0xF0);
     Data7 = display.B7;
@@ -296,16 +298,29 @@ void Escreve_Frase(unsigned char Local){
     EN = 0;
   }
 }
-void Config_Ports(void){
 
-  PORTD.B6 = 0;
-  DDRD.B5 = 1;
+void Config_Ports(void){
   DDRB.B0 = 1;
   DDRB.B1 = 1;
   DDRB.B2 = 1;
   DDRB.B3 = 1;
   DDRB.B4 = 1;
   DDRB.B5 = 1;
+  DDRC.B0 = 0;
+  DDRC.B1 = 0;
+  DDRC.B2 = 0;
+  DDRD.B7 = 0;
+  DDRD.B0 = 1;
+  DDRD.B1 = 1;
+  DDRD.B4 = 1;
+  PORTC.B0 = 1;
+  PORTC.B1 = 1;
+  PORTC.B2 = 1;
+  PORTD.B7 = 1;
+  PORTD.B0 = 1;
+  PORTD.B1 = 1;
+  PORTD.B4 = 1;
+  Key_Ok = Tecla; //PORTC = 0b11111111;
   ADCSRA = 0x93;
 }
 
@@ -361,6 +376,8 @@ void pid_control(double setpoint){
 }
 
 void main(void){
+  int setpoint[3], j, i;
+  i = 0;
   Config_Ports();
   Disp_4bits();
   Init_Timer0();
@@ -373,6 +390,7 @@ void main(void){
   Escreve_Frase(MSG3);
 
   while(1){
+
     AD_Conv(4);
     mostra(Linha2, 0, 255*analog/1022);
     mostra(Linha3, 0, 459*analog/1022 + 32);
