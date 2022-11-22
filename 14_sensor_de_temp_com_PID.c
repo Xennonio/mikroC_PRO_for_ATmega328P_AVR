@@ -1,25 +1,40 @@
+//Conexão do Hardware do LCD
 #define Data7 PORTB.B0
 #define Data6 PORTB.B1
 #define Data5 PORTB.B2
 #define Data4 PORTB.B3
 #define RS PORTB.B4
 #define EN PORTB.B5
-#define NumCol 17
+
+//Controle de posicionamento de caracteres e strings no LCD
+#define NumCol 17 //Número de colunas do LCD (17x5)
+
+//Endereços das linhas do LCD
 #define Linha1 0x80
 #define Linha2 0xC0
 #define Linha3 0x94
 #define Linha4 0xD4
+
+//Códigos das mensagens
 #define MSG1 0
 #define MSG2 1
 #define MSG3 2
+#define MSG4 3
+#define MSG5 4
 
-unsigned char Tab_Disp[10] = {0x03, 0x9F, 0x25, 0x0D, 0x99, 0x49, 0x41, 0x1F, 0x01, 0x09},
-Tab_CGRam[40] = {0x18, 0x18, 0x06, 0x09, 0x08, 0x09, 0x06, 0x00, 0x01, 0x03, 0x07, 0x0F, 0x07, 0x03, 0x01, 0x00,
-0x08, 0x0C, 0x0E, 0x0F, 0x0E, 0x0C, 0x08, 0x00, 0x00, 0x00, 0x04, 0x0E, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F, 0x0E, 0x04, 0x00, 0x00, 0x00},
+//Caracteres especiais a serem carregados na CGRAM do display LCD
+unsigned char Tab_CGRam[40] = {0x18, 0x18, 0x06, 0x09, 0x08, 0x09, 0x06, 0x00, //°C
+                               0x01, 0x03, 0x07, 0x0F, 0x07, 0x03, 0x01, 0x00, //<
+                               0x08, 0x0C, 0x0E, 0x0F, 0x0E, 0x0C, 0x08, 0x00, //>
+                               0x00, 0x00, 0x04, 0x0E, 0x1F, 0x00, 0x00, 0x00, //Seta para cima
+                               0x00, 0x00, 0x1F, 0x0E, 0x04, 0x00, 0x00, 0x00},//Seta para baixo
+                               
+//Parâmetros de configuração inicial do display LCD 4 Bits
 Tab_Conf[4] = {0x28, 0x06, 0x01, 0x0C},
 Tab_4Bit[4] = {0x30, 0x30, 0x30, 0x20},
 Uni, Dez, Cen, display;
 
+//Declaração de variáveis globais
 double aux1, aux2,
 analog,
 lastanalog,
@@ -31,9 +46,92 @@ derr,
 PID,
 input,
 kp = 0.2, ki = 0.2, kd = 0.03, ideal_value = 512.0;
-
 int pwm = 128;
 
+//------Começo do Código de Varredura de Teclado
+#define col_1   PORTD.B4
+#define col_2   PORTD.B0
+#define col_3   PORTD.B1
+#define row_A   PINC.B2
+#define row_B   PINC.B1
+#define row_C   PINC.B0
+#define row_D   PIND.B7
+/*******************************************************************************
+*                                                                              *
+*  Conexões do teclado:                   col_1   col_2   col_3       +5Vcc   *
+*                                           |       |       |            |     *
+*                                           |       |       |    ___     |     *
+*                            --row_A------- 1 ----- 2 ----- 3 --|___|----|     *
+*                            --row_B------- 4 ----- 5 ----- 6 --|___|----|     *
+*                            --row_C------- 7 ----- 8 ----- 9 --|___|----|     *
+*                            --row_D------- * ----- 0 ----- # --|___|----|     *
++                                           |       |       |  4 x 10k         *
+*                                                                              *
+*******************************************************************************/
+unsigned char Digitos[11], digito, Key_Ok;
+char kscan = 1; //Controle de multiplexação de varredura do teclado
+char Tecla = 0; //Variável que memoriza tecla pressionada (disp. LCD)
+char cnt = 0; //Variável que conta ciclos de 20ms para varredura de teclado
+
+//Variável global para converter as teclas pressionadas em seus respectivos códigos ASCII
+unsigned char Tab_ASCII[12]={'0', '1', '2', '3',
+                             '4', '5', '6', '7',
+                             '8', '9', '*', '#'};
+
+//Função que realiza a varredura do teclado matricial do tipo 3x4 no Atmega328p, solicitada por interrupção de timer a cada 20mS
+void Scan_KBD(void){
+  TIMSK0.TOIE0 = 0; //Desliga o Timer0
+  Tecla = 0; //Limpa variável Tecla para display LCD
+  delay_us(500);
+  Key_Ok = Tecla;
+  if(col_1 && kscan == 1){ //Condição: coluna 1 em nível high ? kscan igual 1
+    kscan = 2;
+    col_1 = 0; //Apenas a coluna 1 em nível baixo
+    col_2 = 1;
+    col_3 = 1;
+    delay_ms(20); //Debounce de Tecla pressionada
+    if(!row_A) {Tecla = Tab_ASCII[1]; while(!row_A);}//Escreve '1' no display de 7 segmentos
+    else if(!row_B) {Tecla = Tab_ASCII[4]; while(!row_B);}//Escreve '4' no display de 7 segmentos
+    else if(!row_C) {Tecla = Tab_ASCII[7]; while(!row_C);}//Escreve '7' no display de 7 segmentos
+    else if(!row_D) {Tecla = Tab_ASCII[10]; while(!row_D);}//Escreve '*' no display de 7 segmentos
+  }
+  else if(col_2 && kscan == 2){ //Condição: coluna 2 em nível high ? kscan igual 2
+    kscan = 3;
+    col_1 = 1; //Apenas a coluna 2 em nível baixo
+    col_2 = 0;
+    col_3 = 1;
+    delay_ms(20); //Debounce de Tecla pressionada
+    if(!row_A) {Tecla = Tab_ASCII[2]; while(!row_A);} //Escreve '2' no display de 7 segmentos
+    else if(!row_B) {Tecla = Tab_ASCII[5]; while(!row_B);} //Escreve '5' no display de 7 segmentos
+    else if(!row_C) {Tecla = Tab_ASCII[8]; while(!row_C);} //Escreve '8' no display de 7 segmentos
+    else if(!row_D) {Tecla = Tab_ASCII[0]; while(!row_D);} //Escreve '0' no display de 7 segmentos
+  }
+  else if(col_3 && kscan == 3){ //Condição: coluna 3 em nível high ? kscan igual 3
+    kscan = 1;
+    col_1 = 1; //Apenas a coluna 3 em nível baixo
+    col_2 = 1;
+    col_3 = 0;
+    delay_ms(20);//Debounce de Tecla pressionada
+    if(!row_A) {Tecla = Tab_ASCII[3]; while(!row_A);} //Escreve '3' no display de 7 segmentos
+    else if(!row_B) {Tecla = Tab_ASCII[6]; while(!row_B);} //Escreve '6' no display de 7 segmentos
+    else if(!row_C) {Tecla = Tab_ASCII[9]; while(!row_C);} //Escreve '9' no display de 7 segmentos
+    else if(!row_D) {Tecla = Tab_ASCII[11]; while(!row_D);} //Escreve '#' no display de 7 segmentos
+  }
+  TIMSK0.TOIE0 = 1; //Liga o Timer0
+  Key_Ok = Tecla;
+}
+
+//Função que memoriza o código da tecla pressionada para uso futuro
+char Le_Tecla(void){
+  while(Key_Ok != 0); //Para display LCD
+  while(Key_Ok == 0); //Para display LCD
+  Key_Ok = Tecla;
+  Tecla = 0;
+  return(Key_Ok);
+}
+//------Fim do Código de Varredura de Teclado
+
+//Procedimento para ajuste inicial do HD44780 considerando que o reset interno falhou durante a energização
 void Disp_4bits(void){
  unsigned char y;
  display = 0xF0;
@@ -170,9 +268,11 @@ void Escreve_Char(unsigned char Num_CGRAM){
 
 void Escreve_Frase(unsigned char Local){
   unsigned char i;
- code unsigned char Message[3][18] = {" V-A   S-P   PID ",
-                                      "   'C    'C    'C",
-                                      "   'F    'F    'F"};
+ code unsigned char Message[5][18] = {" V-I   S-P   DIF ",
+                                      "    C     C     C",
+                                      "    F     F     F",
+                                      " V-A:     C   ON ",
+                                      " V-A:     C  OFF "};
   for(i = 0; i <= (NumCol-1); i++){
     display = ((Message[Local][i]) & 0xF0);
     Data7 = display.B7;
@@ -196,9 +296,8 @@ void Escreve_Frase(unsigned char Local){
     EN = 0;
   }
 }
-
 void Config_Ports(void){
-  DDRD.B6 = 1;
+
   PORTD.B6 = 0;
   DDRD.B5 = 1;
   DDRB.B0 = 1;
@@ -222,7 +321,7 @@ int AD_Conv(unsigned char canalAD){
   return analog;
 }
 
-void mostra (int h, int n, double x){
+void mostra(int h, int n, double x){
   aux1 = x/100;
   aux2 = x - 100*floor(aux1);
 
@@ -258,6 +357,7 @@ void pid_control(double setpoint){
   PID = properr + interr + derr;
   input = PID;
   pwm = 255*PID/1022;
+  
 }
 
 void main(void){
@@ -284,12 +384,22 @@ void main(void){
       derr = analog;
     }
     lastanalog = analog;
-
+    
     AD_Conv(5);
     mostra(Linha2, 6, 255*analog/1022);
     mostra(Linha3, 6, 459*analog/1022 + 32);
     pid_control(analog);
-    mostra(Linha2, 12, pwm);
-    mostra(Linha3, 12, 9*pwm/5 + 32);
+    if(abs(pwm - 255*analog/1022) < 100e-3){
+      Posi_Char(Linha4);
+      Escreve_Frase(MSG5);
+      mostra(Linha4, 6, pwm);
+    } else{
+      Posi_Char(Linha4);
+      Escreve_Frase(MSG4);
+      mostra(Linha4, 6, pwm);
+    }
+    mostra(Linha2, 12, abs(pwm - 255*analog/1022));
+    mostra(Linha3, 12, abs(9*(pwm/5 - 51*analog/1022)));
+    mostra(Linha4, 6, pwm);
   }
 }
