@@ -280,7 +280,7 @@ void main(void){
   Escreve_Frase(MSG2);
 
   while(1){
-  AD_Conv(4);
+  AD_Conv(5);
   mostra(1, 255*analog/1022);
       if(lastanalog != analog){
       input = analog;
@@ -291,7 +291,7 @@ void main(void){
     }
     lastanalog = analog;
 
-    AD_Conv(5);
+    AD_Conv(4);
     mostra(6, 255*analog/1022);
     pid_control(analog);
     mostra(11, pwm);
